@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators'
 import { Post } from './post.model'
+import { PostService } from './posts.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ export class AppComponent implements OnInit {
 
   isFetching = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+    private postService: PostService) {}
 
   ngOnInit() {
     this.fetchPosts();
@@ -22,16 +24,14 @@ export class AppComponent implements OnInit {
   onCreatePost(postData: Post) {
     // Send Http request
     console.log(postData);
-    this.http.post<{name: string}>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json',
-    postData)
-    .subscribe(( rsp ) => {
-      console.log(rsp)
-    })
+    this.postService.creatAndStorePost(postData.title, postData.post)
+
   }
 
   onFetchPosts() {
     // Send Http request
-    this.fetchPosts();
+    this.isFetching = true;
+    this.postService.fetchPosts();
 
   }
 
@@ -40,21 +40,5 @@ export class AppComponent implements OnInit {
   }
 
   private fetchPosts (){
-    this.isFetching = true;
-
-    this.http.get<{ [key: string]: Post }>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json')
-    .pipe(map(( rsp ) => {
-      const postArray: Post[] = [];
-      for (const key in rsp) {
-        if(rsp.hasOwnProperty(key)){
-          postArray.push({...rsp[key], id: key});
-        }
-      }
-      return postArray;
-    }))
-    .subscribe(posts => {
-      this.isFetching = false;
-      this.loadedPosts = posts
-    })
   }
 }

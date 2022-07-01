@@ -1,0 +1,41 @@
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { map } from "rxjs/operators";
+import { Post } from "./post.model";
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PostService{
+
+  constructor(
+    private http: HttpClient
+  ){
+
+  }
+
+  creatAndStorePost(title: string, content: string){
+    const postData: Post = {title: title, post: content};
+    this.http.post<{name: string}>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json',
+    postData)
+    .subscribe(( rsp ) => {
+      console.log(rsp)
+    })
+  }
+
+  fetchPosts(){
+
+    this.http.get<{ [key: string]: Post }>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json')
+    .pipe(map(( rsp ) => {
+      const postArray: Post[] = [];
+      for (const key in rsp) {
+        if(rsp.hasOwnProperty(key)){
+          postArray.push({...rsp[key], id: key});
+        }
+      }
+      return postArray;
+    }))
+    .subscribe(posts => {
+    })
+  }
+}
