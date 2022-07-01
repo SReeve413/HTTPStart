@@ -1,5 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 import { Post } from "./post.model";
 
@@ -23,9 +24,9 @@ export class PostService{
     })
   }
 
-  fetchPosts(){
+  fetchPosts() {
 
-    this.http.get<{ [key: string]: Post }>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json')
+    return this.http.get<{ [key: string]: Post }>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json')
     .pipe(map(( rsp ) => {
       const postArray: Post[] = [];
       for (const key in rsp) {
@@ -35,7 +36,5 @@ export class PostService{
       }
       return postArray;
     }))
-    .subscribe(posts => {
-    })
   }
 }
