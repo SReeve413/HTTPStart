@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import { Post } from "./post.model";
 
@@ -8,6 +8,8 @@ import { Post } from "./post.model";
   providedIn: 'root'
 })
 export class PostService{
+
+  error = new Subject<string> ();
 
   constructor(
     private http: HttpClient
@@ -21,6 +23,8 @@ export class PostService{
     postData)
     .subscribe(( rsp ) => {
       console.log(rsp)
+    }, error => {
+      this.error.next(error.message);
     })
   }
 
