@@ -18,7 +18,7 @@ export class PostService{
   }
 
   creatAndStorePost(title: string, content: string){
-    const postData: Post = {title: title, post: content};
+    const postData: Post = {title: title, content: content};
     this.http.post<{name: string}>('https://ng-complete-guide-fb696-default-rtdb.firebaseio.com/posts.json',
     postData,
     { observe: 'response'})
